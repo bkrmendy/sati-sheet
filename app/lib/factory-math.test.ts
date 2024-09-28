@@ -1,36 +1,12 @@
 import { describe, it, expect } from '@jest/globals'
-import { calculatePoolBoundary, Pool, Recipe } from './factory-math'
-
-const ironOre: Recipe = {
-  inputs: [],
-  outputs: [{ material: 'copper-ore', quantity: 300 }],
-}
-
-const copperIngot: Recipe = {
-  inputs: [{ material: 'copper-ore', quantity: 60 }],
-  outputs: [{ material: 'copper-ingot', quantity: 30 }],
-}
-
-const copperSheet: Recipe = {
-  inputs: [{ material: 'copper-ingot', quantity: 10 }],
-  outputs: [{ material: 'copper-sheet', quantity: 4 }],
-}
-
-const copperWire: Recipe = {
-  inputs: [{ material: 'copper-ingot', quantity: 4 }],
-  outputs: [{ material: 'copper-wire', quantity: 4 }],
-}
-
-const copperCable: Recipe = {
-  inputs: [{ material: 'copper-wire', quantity: 3 }],
-  outputs: [{ material: 'cable', quantity: 2 }],
-}
+import { calculatePoolBoundary, Pool } from './factory-math'
+import { Recipes } from './recipes'
 
 describe('factory math', () => {
   it('can calculate pool from single copper ore', () => {
     const pool: Pool = {
       name: 'Copper Ore',
-      recipesManufactured: [ironOre],
+      recipesManufactured: [Recipes.copperOre],
     }
 
     expect(calculatePoolBoundary(pool)).toMatchInlineSnapshot(`
@@ -49,7 +25,12 @@ describe('factory math', () => {
   it('can calculate pool boundary from miner + smelter', () => {
     const pool: Pool = {
       name: 'Copper Ingot',
-      recipesManufactured: [ironOre, copperIngot, copperIngot, copperIngot],
+      recipesManufactured: [
+        Recipes.copperOre,
+        Recipes.copperIngot,
+        Recipes.copperIngot,
+        Recipes.copperIngot,
+      ],
     }
 
     expect(calculatePoolBoundary(pool)).toMatchInlineSnapshot(`
@@ -73,20 +54,20 @@ describe('factory math', () => {
     const pool: Pool = {
       name: 'Big Copper Site',
       recipesManufactured: [
-        ironOre,
-        copperIngot,
-        copperIngot,
-        copperIngot,
-        copperIngot,
-        copperSheet,
-        copperSheet,
-        copperWire,
-        copperWire,
-        copperWire,
-        copperWire,
-        copperCable,
-        copperCable,
-        copperCable,
+        Recipes.copperOre,
+        Recipes.copperIngot,
+        Recipes.copperIngot,
+        Recipes.copperIngot,
+        Recipes.copperIngot,
+        Recipes.copperSheet,
+        Recipes.copperSheet,
+        Recipes.copperWire,
+        Recipes.copperWire,
+        Recipes.copperWire,
+        Recipes.copperWire,
+        Recipes.copperCable,
+        Recipes.copperCable,
+        Recipes.copperCable,
       ],
     }
     expect(calculatePoolBoundary(pool)).toMatchInlineSnapshot(`
@@ -118,19 +99,19 @@ describe('factory math', () => {
     `)
   })
 
-  it("can calculate what's need", () => {
+  it("can calculate what's needed", () => {
     const pool: Pool = {
       name: 'Incomplete Copper Pool',
       recipesManufactured: [
-        copperSheet,
-        copperSheet,
-        copperWire,
-        copperWire,
-        copperWire,
-        copperWire,
-        copperCable,
-        copperCable,
-        copperCable,
+        Recipes.copperSheet,
+        Recipes.copperSheet,
+        Recipes.copperWire,
+        Recipes.copperWire,
+        Recipes.copperWire,
+        Recipes.copperWire,
+        Recipes.copperCable,
+        Recipes.copperCable,
+        Recipes.copperCable,
       ],
     }
 

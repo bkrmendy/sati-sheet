@@ -4,6 +4,7 @@ export interface MaterialQuantity {
 }
 
 export interface Recipe {
+  name: string
   inputs: MaterialQuantity[]
   outputs: MaterialQuantity[]
 }
