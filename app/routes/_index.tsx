@@ -41,7 +41,7 @@ function PoolCard(props: PoolCardProps) {
   const boundary = calculatePoolBoundary(pool)
 
   return (
-    <div className="m-4 grid max-w-[500px] grid-cols-4 border-2 border-slate-950 font-mono">
+    <div className="m-4 grid max-w-[600px] grid-cols-4 border-2 border-slate-950 font-mono">
       <div className="col-span-4 flex justify-center border border-slate-950 p-2 text-2xl font-bold uppercase">
         {pool.name}
       </div>
