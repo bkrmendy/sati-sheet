@@ -11,43 +11,46 @@ export default function Index() {
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="flex flex-col items-center gap-16">
-        <header className="flex flex-col items-center gap-9">
-          <h1 className="leading text-2xl font-bold text-gray-800 dark:text-gray-100">
-            Welcome to <span className="sr-only">Remix</span>
-          </h1>
-          <div className="h-[144px] w-[434px]">
-            <img
-              src="/logo-light.png"
-              alt="Remix"
-              className="block w-full dark:hidden"
-            />
-            <img
-              src="/logo-dark.png"
-              alt="Remix"
-              className="hidden w-full dark:block"
-            />
+        <div className="m-4 grid max-w-[600px] grid-cols-4 border-2 border-slate-50 font-mono">
+          <div className="col-span-4 flex justify-center border border-slate-50 p-2 text-2xl font-bold uppercase">
+            Copper site
           </div>
-        </header>
-        <nav className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-gray-200 p-6 dark:border-gray-700">
-          <p className="leading-6 text-gray-700 dark:text-gray-200">
-            What&apos;s next?
-          </p>
-          <ul>
-            {resources.map(({ href, text, icon }) => (
-              <li key={href}>
-                <a
-                  className="group flex items-center gap-3 self-stretch p-3 leading-normal text-blue-700 hover:underline dark:text-blue-500"
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {icon}
-                  {text}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+          <div className="col-span-2 flex justify-center border border-slate-50 p-1 pt-3 text-xl font-semibold uppercase">
+            Needs
+          </div>
+          <div className="col-span-2 flex justify-center border border-slate-50 p-1 pt-3 text-xl font-bold uppercase">
+            Makes
+          </div>
+          <div className="col-span-2 row-span-2 border border-slate-50 p-2"></div>
+          <div className="flex justify-end border border-slate-50 p-2">
+            Copper sheet
+          </div>
+          <div className="border border-slate-50 p-2">300/min</div>
+          <div className="flex justify-end border border-slate-50 p-2">
+            Cable
+          </div>
+          <div className="border border-slate-50 p-2">400/min</div>
+
+          <div className="col-span-4 flex justify-center border border-slate-50 p-2 pt-3 text-xl font-bold uppercase">
+            Machines
+          </div>
+          <div className="col-span-2 flex justify-end border border-slate-50 p-2">
+            Copper ore
+          </div>
+          <div className="col-span-2 border border-slate-50 p-2">x 1</div>
+          <div className="col-span-2 flex justify-end border border-slate-50 p-2">
+            Copper ingot
+          </div>
+          <div className="col-span-2 border border-slate-50 p-2">x 7</div>
+          <div className="col-span-2 flex justify-end border border-slate-50 p-2">
+            Wire
+          </div>
+          <div className="col-span-2 border border-slate-50 p-2">x 10</div>
+          <div className="col-span-2 flex justify-end border border-slate-50 p-2">
+            Copper sheet
+          </div>
+          <div className="col-span-2 border border-slate-50 p-2">x 4</div>
+        </div>
       </div>
     </div>
   );
