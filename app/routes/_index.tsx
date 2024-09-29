@@ -42,6 +42,14 @@ const allRecipes = [
   Recipes.copperCable,
 ]
 
+function AddPool() {
+  return (
+    <div className="flex items-center justify-center w-[400px] h-[600px] border-2 border-dashed border-slate-950 opacity-20 hover:opacity-100 text-2xl font-mono cursor-pointer">
+      + Add Pool
+    </div>
+  )
+}
+
 function AddRecipe() {
   const [open, setOpen] = React.useState(false)
 
@@ -79,7 +87,7 @@ function PoolCard(props: PoolCardProps) {
   const boundary = calculatePoolBoundary(pool)
 
   return (
-    <div className="m-4 grid max-w-[600px] h-max grid-cols-4 border-2 border-slate-950 font-mono">
+    <div className="grid max-w-[600px] h-max grid-cols-4 border-2 border-slate-950 font-mono">
       <div className="col-span-4 flex justify-center border border-slate-950 p-2 text-2xl font-bold uppercase">
         <Input
           className="text-2xl font-bold uppercase outline-none rounded-none shadow-none border-none"
@@ -94,6 +102,9 @@ function PoolCard(props: PoolCardProps) {
         Makes
       </div>
       <div className="col-span-2 row-span-2 grid grid-cols-2 border-slate-950">
+        {boundary.needs.length === 0 && (
+          <div className="col-span-2 border border-slate-950"></div>
+        )}
         {boundary.needs.map((recipe) => (
           <React.Fragment key={recipe.material}>
             <div className="flex justify-end border border-slate-950 p-2 font-semibold">
@@ -123,13 +134,13 @@ function PoolCard(props: PoolCardProps) {
       {Object.values(recipes).map(({ recipe, count }) => {
         return (
           <React.Fragment key={recipe.name}>
-            <div className="group col-span-2 flex justify-between border border-slate-950 p-2 font-semibold">
-              <span className="invisible group-hover:visible group-hover:bg-red-100 px-2 cursor-pointer text-red-500">
+            <div className="group col-span-2 flex justify-between items-center border border-slate-950 p-2 font-semibold">
+              <span className="invisible group-hover:visible group-hover:bg-red-100 p-1 cursor-pointer text-red-500">
                 Delete
               </span>
               <span>{recipe.name}</span>
             </div>
-            <div className="group flex gap-8 flex-row col-span-2 border border-slate-950 p-2 font-semibold">
+            <div className="group flex items-center gap-8 flex-row col-span-2 border border-slate-950 p-2 font-semibold">
               <span>x{count}</span>
               <div className="flex gap-4">
                 <span className="invisible group-hover:visible cursor-pointer border-2 border-transparent hover:border-slate-950 px-2">
@@ -153,6 +164,7 @@ function PoolCard(props: PoolCardProps) {
 const pool: Pool = {
   name: 'Big Copper Site',
   recipesManufactured: [
+    Recipes.copperOre,
     Recipes.copperIngot,
     Recipes.copperIngot,
     Recipes.copperIngot,
@@ -183,8 +195,9 @@ const pool: Pool = {
 export default function Index() {
   return (
     <div className="flex h-screen">
-      <div className="flex flex-wrap gap-16">
+      <div className="flex flex-wrap gap-16 p-4">
         <PoolCard pool={pool} />
+        <AddPool />
       </div>
     </div>
   )
