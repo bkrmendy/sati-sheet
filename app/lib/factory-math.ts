@@ -57,7 +57,7 @@ function difference(
 function clampMaterialQuantity(multi: MultiMaterialQuantity) {
   return Object.entries(multi).reduce(
     (acc, [material, quantity]) =>
-      quantity < 0 ? acc : { ...acc, [material]: quantity },
+      quantity <= 0 ? acc : { ...acc, [material]: quantity },
     {}
   )
 }

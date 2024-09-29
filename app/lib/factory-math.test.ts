@@ -13,8 +13,8 @@ describe('factory math', () => {
       {
         "makes": [
           {
-            "material": "copper-ore",
-            "quantity": 300,
+            "material": "Copper ore",
+            "quantity": 480,
           },
         ],
         "needs": [],
@@ -37,11 +37,11 @@ describe('factory math', () => {
       {
         "makes": [
           {
-            "material": "copper-ore",
-            "quantity": 120,
+            "material": "Copper ore",
+            "quantity": 390,
           },
           {
-            "material": "copper-ingot",
+            "material": "Copper ingot",
             "quantity": 90,
           },
         ],
@@ -74,27 +74,28 @@ describe('factory math', () => {
       {
         "makes": [
           {
-            "material": "copper-ore",
-            "quantity": 60,
+            "material": "Copper ore",
+            "quantity": 360,
           },
           {
-            "material": "copper-ingot",
-            "quantity": 84,
+            "material": "Copper ingot",
+            "quantity": 20,
           },
           {
-            "material": "copper-sheet",
-            "quantity": 8,
+            "material": "Copper sheet",
+            "quantity": 20,
           },
           {
-            "material": "copper-wire",
-            "quantity": 7,
-          },
-          {
-            "material": "cable",
-            "quantity": 6,
+            "material": "Cable",
+            "quantity": 90,
           },
         ],
-        "needs": [],
+        "needs": [
+          {
+            "material": "Copper wire",
+            "quantity": 60,
+          },
+        ],
       }
     `)
   })
@@ -119,22 +120,22 @@ describe('factory math', () => {
       {
         "makes": [
           {
-            "material": "copper-sheet",
-            "quantity": 8,
+            "material": "Copper sheet",
+            "quantity": 20,
           },
           {
-            "material": "copper-wire",
-            "quantity": 7,
-          },
-          {
-            "material": "cable",
-            "quantity": 6,
+            "material": "Cable",
+            "quantity": 90,
           },
         ],
         "needs": [
           {
-            "material": "copper-ingot",
-            "quantity": 36,
+            "material": "Copper ingot",
+            "quantity": 100,
+          },
+          {
+            "material": "Copper wire",
+            "quantity": 60,
           },
         ],
       }
