@@ -87,7 +87,7 @@ function PoolCard(props: PoolCardProps) {
   const boundary = calculatePoolBoundary(pool)
 
   return (
-    <div className="grid max-w-[600px] h-max grid-cols-4 border-2 border-slate-950 font-mono">
+    <div className="grid max-w-[650px] h-max grid-cols-4 border-2 border-slate-950 font-mono">
       <div className="col-span-4 flex justify-center border border-slate-950 p-2 text-2xl font-bold uppercase">
         <Input
           className="text-2xl font-bold uppercase outline-none rounded-none shadow-none border-none"
@@ -195,7 +195,7 @@ const pool: Pool = {
 export default function Index() {
   return (
     <div className="flex h-screen">
-      <div className="flex flex-wrap gap-16 p-4">
+      <div className="grid grid-cols-3 gap-16 p-4">
         <PoolCard pool={pool} />
         <AddPool />
       </div>
