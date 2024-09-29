@@ -1,3 +1,4 @@
+import { id } from '@instantdb/react'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -9,4 +10,8 @@ export function NOOP() {}
 
 export function assertNever(n: never): never {
   throw new Error(`expected never, got: ${JSON.stringify(n)}`)
+}
+
+export function makeId(): string {
+  return id()
 }

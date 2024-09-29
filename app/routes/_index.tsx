@@ -1,11 +1,15 @@
 import type { MetaFunction } from '@remix-run/node'
+import { useAtom, useSetAtom } from 'jotai'
 import React from 'react'
+import { DBAtom } from '~/atoms'
 import { Command, CommandInput, CommandItem, CommandList } from '~/components/ui/command'
 import { Input } from '~/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
+import { useDispatch, useHistory } from '~/hooks'
+import { initDB } from '~/lib/db'
 import { calculatePoolBoundary, Pool, Recipe } from '~/lib/factory-math'
 import { Recipes } from '~/lib/recipes'
-import { NOOP } from '~/lib/utils'
+import { makeId, NOOP } from '~/lib/utils'
 
 export const meta: MetaFunction = () => {
   return [
@@ -43,8 +47,20 @@ const allRecipes = [
 ]
 
 function AddPool() {
+  const dispatch = useDispatch()
+  const onClick = React.useCallback(() => {
+    dispatch({
+      type: 'create-pool',
+      poolId: makeId(),
+      pool: { name: 'New Pool', recipesManufactured: [] },
+    })
+  }, [dispatch])
+
   return (
-    <div className="flex items-center justify-center w-[400px] h-[600px] border-2 border-dashed border-slate-950 opacity-20 hover:opacity-100 text-2xl font-mono cursor-pointer">
+    <div
+      onClick={onClick}
+      className="flex items-center justify-center w-[400px] h-[600px] border-2 border-dashed border-slate-950 opacity-20 hover:opacity-100 text-2xl font-mono cursor-pointer"
+    >
       + Add Pool
     </div>
   )
@@ -161,29 +177,8 @@ function PoolCard(props: PoolCardProps) {
   )
 }
 
-const pool: Pool = {
-  name: 'Big Copper Site',
-  recipesManufactured: [
-    Recipes.copperOre,
-    Recipes.copperIngot,
-    Recipes.copperIngot,
-    Recipes.copperIngot,
-    Recipes.copperIngot,
-    Recipes.copperSheet,
-    Recipes.copperSheet,
-    Recipes.copperWire,
-    Recipes.copperWire,
-    Recipes.copperWire,
-    Recipes.copperWire,
-    Recipes.copperCable,
-    Recipes.copperCable,
-    Recipes.copperCable,
-  ],
-}
-
 /**
  * TODO
- * - [ ] history / actions
  * - [ ] instantdb / check whether it works with Vercel
  * - [ ] edit pool name
  * - [ ] add/remove recipe in pool
@@ -193,10 +188,26 @@ const pool: Pool = {
  */
 
 export default function Index() {
+  const [, { undo, redo }] = useHistory()
+
+  const [db] = useAtom(DBAtom)
+
+  const { isLoading, error, data } = db.useQuery({ pools: {} })
+  if (error) {
+    console.error(error)
+  }
   return (
     <div className="flex h-screen">
+      <div onClick={undo}>Undo</div>
+      <div onClick={redo}>Redo</div>
       <div className="grid grid-cols-3 gap-16 p-4">
-        <PoolCard pool={pool} />
+        {isLoading && 'Loading...'}
+        {error && `Error: ${error}`}
+        {data &&
+          data.pools.map(
+            // TODO: figure out the types here
+            (pool) => !pool.deleted && <PoolCard key={pool.id} pool={pool.pool} />
+          )}
         <AddPool />
       </div>
     </div>
