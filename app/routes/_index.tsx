@@ -1,12 +1,11 @@
 import type { MetaFunction } from '@remix-run/node'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom } from 'jotai'
 import React from 'react'
 import { DBAtom } from '~/atoms'
 import { Command, CommandInput, CommandItem, CommandList } from '~/components/ui/command'
 import { Input } from '~/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { useDispatch, useHistory } from '~/hooks'
-import { initDB } from '~/lib/db'
 import { calculatePoolBoundary, Pool, Recipe } from '~/lib/factory-math'
 import { Recipes } from '~/lib/recipes'
 import { makeId, NOOP } from '~/lib/utils'
@@ -179,10 +178,8 @@ function PoolCard(props: PoolCardProps) {
 
 /**
  * TODO
- * - [ ] instantdb / check whether it works with Vercel
  * - [ ] edit pool name
  * - [ ] add/remove recipe in pool
- * - [ ] add new pool
  * - [ ] combine pools: shows the makes/needs of pools, taken together (emulates trains)
  * - [ ] upload recipes json
  */
