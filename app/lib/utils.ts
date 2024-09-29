@@ -6,3 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function NOOP() {}
+
+export function assertNever(n: never): never {
+  throw new Error(`expected never, got: ${JSON.stringify(n)}`)
+}

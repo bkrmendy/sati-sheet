@@ -183,7 +183,7 @@ const pool: Pool = {
 
 /**
  * TODO
- * - [ ] deploy to Vercel
+ * - [ ] history / actions
  * - [ ] instantdb / check whether it works with Vercel
  * - [ ] edit pool name
  * - [ ] add/remove recipe in pool
