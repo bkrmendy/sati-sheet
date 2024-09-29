@@ -1,7 +1,39 @@
 import { describe, expect, it } from '@jest/globals'
-import { canRedo, canUndo, History, redo, undo } from './history'
+import { append, canRedo, canUndo, History, redo, undo } from './history'
 
 describe('history', () => {
+  it('can append action', () => {
+    const history: History = {
+      undoStack: [{ type: 'add-recipe', poolId: '1', recipeName: 'Copper ore' }],
+      redoStack: [],
+    }
+
+    const appendedHistory = append(history, {
+      type: 'edit-pool-name',
+      poolId: '1',
+      change: { old: 'Old Pool', new: 'New Pool' },
+    })
+    expect(appendedHistory).toMatchInlineSnapshot(`
+      {
+        "redoStack": [],
+        "undoStack": [
+          {
+            "change": {
+              "new": "New Pool",
+              "old": "Old Pool",
+            },
+            "poolId": "1",
+            "type": "edit-pool-name",
+          },
+          {
+            "poolId": "1",
+            "recipeName": "Copper ore",
+            "type": "add-recipe",
+          },
+        ],
+      }
+    `)
+  })
   it('can undo', () => {
     const history: History = {
       undoStack: [{ type: 'add-recipe', poolId: '1', recipeName: 'Copper ore' }],

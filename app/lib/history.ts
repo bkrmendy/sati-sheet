@@ -8,6 +8,11 @@ export interface History {
 export const canUndo = (history: History) => history.undoStack.length > 0
 export const canRedo = (history: History) => history.redoStack.length > 0
 
+export function append(history: History, action: Action): History {
+  const { undoStack, redoStack } = history
+  return { undoStack: [action, ...undoStack], redoStack: redoStack }
+}
+
 export function undo(history: History): [History, Action] | null {
   if (!canUndo(history)) {
     return null
