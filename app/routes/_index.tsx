@@ -68,7 +68,7 @@ function AddRecipe({ onAddRecipe }: AddRecipeProps) {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger>+ Add</PopoverTrigger>
+      <PopoverTrigger className="font-semibold">+ Add</PopoverTrigger>
       <PopoverContent
         side="right"
         align="start"
@@ -330,7 +330,7 @@ function PoolCard(props: PoolCardProps) {
  * - [ ] recipes should be linked to the pools, instead of being stored in the pools
  *
  *   TODO
- * - [ ] combine pools: shows the makes/needs of pools, taken together (emulates trains)
+ * - [ ] combine pools: shows the makes/needs of pools, taken together (emulates trains) - smth like tags
  * - [ ] grouped view for pools
  * - [ ] upload recipes json
  * - [ ] filter pools
