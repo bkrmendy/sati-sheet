@@ -1,4 +1,4 @@
-import { Pool } from './factory-math'
+import { Pool, Recipe } from './factory-math'
 import { assertNever } from './utils'
 
 export interface Change<T> {
@@ -12,16 +12,10 @@ export interface EditPoolName {
   change: Change<string>
 }
 
-export interface AddRecipe {
-  type: 'add-recipe'
+export interface SetRecipes {
+  type: 'set-recipes'
   poolId: string
-  recipeName: string
-}
-
-export interface RemoveRecipe {
-  type: 'remove-recipe'
-  poolId: string
-  recipeName: string
+  recipes: Change<Recipe[]>
 }
 
 export interface CreatePool {
@@ -41,13 +35,7 @@ export interface DeletePool {
   poolId: string
 }
 
-export type Action =
-  | EditPoolName
-  | AddRecipe
-  | RemoveRecipe
-  | CreatePool
-  | ResurrectPool
-  | DeletePool
+export type Action = EditPoolName | SetRecipes | CreatePool | ResurrectPool | DeletePool
 
 function invertChange<T>(change: Change<T>): Change<T> {
   return { old: change.new, new: change.old }
@@ -55,17 +43,11 @@ function invertChange<T>(change: Change<T>): Change<T> {
 
 export function inverse(action: Action): Action {
   switch (action.type) {
-    case 'add-recipe':
+    case 'set-recipes':
       return {
-        type: 'remove-recipe',
+        type: 'set-recipes',
         poolId: action.poolId,
-        recipeName: action.recipeName,
-      }
-    case 'remove-recipe':
-      return {
-        type: 'add-recipe',
-        poolId: action.poolId,
-        recipeName: action.recipeName,
+        recipes: invertChange(action.recipes),
       }
     case 'edit-pool-name':
       return {

@@ -1,6 +1,7 @@
 import { init, tx } from '@instantdb/react'
 import { Pool, Recipe } from './factory-math'
 import { Action } from './actions'
+import { assertNever } from './utils'
 
 interface DBPool {
   id: string
@@ -42,7 +43,14 @@ export function processAction(db: DB, action: Action) {
     case 'edit-pool-name':
       db.transact([tx.pools[action.poolId].update({ name: action.change.new })])
       break
+    case 'set-recipes':
+      db.transact([
+        tx.pools[action.poolId].update({
+          pool: { recipesManufactured: action.recipes.new },
+        }),
+      ])
+      break
     default:
-      throw new Error('not implemented')
+      assertNever(action)
   }
 }

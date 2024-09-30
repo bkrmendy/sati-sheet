@@ -7,9 +7,10 @@ import { Command, CommandInput, CommandItem, CommandList } from '~/components/ui
 import { Input } from '~/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { useDispatch, useHistory } from '~/hooks'
+import { SetRecipes } from '~/lib/actions'
 import { calculatePoolBoundary, Pool, Recipe } from '~/lib/factory-math'
 import { Recipes } from '~/lib/recipes'
-import { makeId, NOOP } from '~/lib/utils'
+import { makeId } from '~/lib/utils'
 
 export const meta: MetaFunction = () => {
   return [
@@ -38,6 +39,10 @@ function recipesWithCount(recipes: Recipe[]): RecipesWithCount {
   return result
 }
 
+function countToRecipes(count: RecipesWithCount): Recipe[] {
+  return Object.values(count).flatMap(({ recipe, count }) => Array(count).fill(recipe))
+}
+
 const allRecipes = [
   Recipes.copperOre,
   Recipes.copperIngot,
@@ -46,8 +51,20 @@ const allRecipes = [
   Recipes.copperCable,
 ]
 
-function AddRecipe() {
+interface AddRecipeProps {
+  onAddRecipe: (recipe: Recipe) => void
+}
+
+function AddRecipe({ onAddRecipe }: AddRecipeProps) {
   const [open, setOpen] = React.useState(false)
+
+  const onRecipeSelected = React.useCallback(
+    (recipe: Recipe) => {
+      onAddRecipe(recipe)
+      setOpen(false)
+    },
+    [onAddRecipe]
+  )
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -60,9 +77,13 @@ function AddRecipe() {
         <Command>
           <CommandInput placeholder="Search recipes..." />
           <CommandList>
-            {allRecipes.map(({ name }) => (
-              <CommandItem key={name} value={name} onSelect={NOOP}>
-                {name}
+            {allRecipes.map((recipe) => (
+              <CommandItem
+                key={recipe.name}
+                value={recipe.name}
+                onSelect={() => onRecipeSelected(recipe)}
+              >
+                {recipe.name}
               </CommandItem>
             ))}
           </CommandList>
@@ -111,8 +132,66 @@ function PoolCard(props: PoolCardProps) {
     [inputRef]
   )
 
-  const recipes = recipesWithCount(pool.recipesManufactured)
+  const setRecipesAction = React.useCallback(
+    (recipes: Recipe[]): SetRecipes => ({
+      type: 'set-recipes',
+      poolId: props.id,
+      recipes: {
+        old: pool.recipesManufactured,
+        new: recipes,
+      },
+    }),
+    [pool.recipesManufactured, props.id]
+  )
+
+  const onAddRecipe = React.useCallback(
+    (recipe: Recipe) => {
+      dispatch(setRecipesAction([...pool.recipesManufactured, recipe]))
+    },
+    [dispatch, pool.recipesManufactured, setRecipesAction]
+  )
+
+  const onDeleteRecipe = React.useCallback(
+    (recipe: Recipe) => {
+      dispatch(
+        setRecipesAction(pool.recipesManufactured.filter((r) => r.name !== recipe.name))
+      )
+    },
+    [dispatch, pool.recipesManufactured, setRecipesAction]
+  )
+
+  const recipes = React.useMemo(
+    () => recipesWithCount(pool.recipesManufactured),
+    [pool.recipesManufactured]
+  )
   const boundary = calculatePoolBoundary(pool)
+
+  const onIncrementRecipe = React.useCallback(
+    (recipe: Recipe) => {
+      const nRecipes = recipes[recipe.name]?.count ?? 0
+      const newCount = {
+        ...recipes,
+        [recipe.name]: { recipe: recipe, count: nRecipes + 1 },
+      }
+      dispatch(setRecipesAction(countToRecipes(newCount)))
+    },
+    [dispatch, recipes, setRecipesAction]
+  )
+
+  const onDecrementRecipe = React.useCallback(
+    (recipe: Recipe) => {
+      const nRecipes = recipes[recipe.name]?.count ?? 0
+      if (nRecipes <= 1) {
+        return onDeleteRecipe(recipe)
+      }
+      const newCount = {
+        ...recipes,
+        [recipe.name]: { recipe: recipe, count: nRecipes - 1 },
+      }
+      dispatch(setRecipesAction(countToRecipes(newCount)))
+    },
+    [dispatch, onDeleteRecipe, recipes, setRecipesAction]
+  )
 
   return (
     <div className="bg-white grid max-w-[650px] h-max grid-cols-4 border-2 border-slate-950 font-mono">
@@ -132,6 +211,16 @@ function PoolCard(props: PoolCardProps) {
       <div className="col-span-2 flex justify-center border border-slate-950 p-1 pt-3 text-xl font-bold uppercase">
         Makes
       </div>
+      {pool.recipesManufactured.length === 0 && (
+        <>
+          <div className="col-span-2 flex justify-center border border-slate-950 p-1 pt-3 font-semibold uppercase">
+            N/A
+          </div>
+          <div className="col-span-2 flex justify-center border border-slate-950 p-1 pt-3 font-bold uppercase">
+            N/A
+          </div>
+        </>
+      )}
       <div className="col-span-2 row-span-2 grid grid-cols-2 border-slate-950">
         {boundary.needs.length === 0 && (
           <div className="col-span-2 border border-slate-950"></div>
@@ -169,18 +258,27 @@ function PoolCard(props: PoolCardProps) {
         return (
           <React.Fragment key={recipe.name}>
             <div className="group col-span-2 flex justify-between items-center border border-slate-950 p-2 font-semibold">
-              <span className="invisible group-hover:visible group-hover:bg-red-100 p-1 cursor-pointer text-red-500">
+              <span
+                onClick={() => onDeleteRecipe(recipe)}
+                className="select-none invisible group-hover:visible group-hover:bg-red-100 p-1 cursor-pointer text-red-500"
+              >
                 Delete
               </span>
               <span>{recipe.name}</span>
             </div>
-            <div className="group flex items-center gap-8 flex-row col-span-2 border border-slate-950 p-2 font-semibold">
+            <div className="group select-none flex items-center gap-8 flex-row col-span-2 border border-slate-950 p-2 font-semibold">
               <span>x{count}</span>
               <div className="flex gap-4">
-                <span className="invisible group-hover:visible cursor-pointer border-2 border-transparent hover:border-slate-950 px-2">
+                <span
+                  onClick={() => onDecrementRecipe(recipe)}
+                  className="invisible group-hover:visible cursor-pointer border-2 border-transparent hover:border-slate-950 px-2"
+                >
                   -
                 </span>
-                <span className="invisible group-hover:visible cursor-pointer border-2 border-transparent hover:border-slate-950 px-2">
+                <span
+                  onClick={() => onIncrementRecipe(recipe)}
+                  className="invisible group-hover:visible cursor-pointer border-2 border-transparent hover:border-slate-950 px-2"
+                >
                   +
                 </span>
               </div>
@@ -189,25 +287,25 @@ function PoolCard(props: PoolCardProps) {
         )
       })}
       <div className="col-span-4 border border-slate-950 p-2">
-        <AddRecipe />
+        <AddRecipe onAddRecipe={onAddRecipe} />
       </div>
     </div>
   )
 }
 
 /**
- * TECH DEBT
+ *   TECH DEBT
  * - [ ] move db to context
  * - [ ] set up some sort of tailwind class sharing system/design system
  * - [ ] recipes should be linked to the pools, instead of being stored in the pools
  *
- * TODO
- * - [ ] add/remove recipe in pool
+ *   TODO
  * - [ ] delete pool UI
  * - [ ] combine pools: shows the makes/needs of pools, taken together (emulates trains)
  * - [ ] upload recipes json
  * - [ ] filter pools
  * - [ ] grouped view for pools
+ * - [ ] keyboard shortcuts
  */
 
 export default function Index() {
@@ -231,7 +329,7 @@ export default function Index() {
   return (
     <div className="flex h-screen pt-16 relative bg-repeat heropattern-graphpaper-gray-300">
       <div className="absolute top-5 w-full flex justify-center">
-        <div className="bg-white flex items-center gap-4 px-2 py-1 border-2 border-slate-950 font-mono">
+        <div className="bg-white flex items-center gap-4 p-2 border-2 border-slate-950 font-mono">
           <div
             className="cursor-pointer border border-transparent p-1 hover:border-slate-950"
             onClick={undo}
