@@ -13,8 +13,8 @@ import { makeId, NOOP } from '~/lib/utils'
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'New Remix App' },
-    { name: 'description', content: 'Welcome to Remix!' },
+    { title: 'Sati Manager' },
+    { name: 'description', content: 'Oversee your factory like a pro' },
   ]
 }
 
