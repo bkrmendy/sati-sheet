@@ -82,19 +82,25 @@ function PoolCard(props: PoolCardProps) {
   const { pool } = props
 
   const inputRef = React.createRef<HTMLInputElement>()
-  const [currentPoolName, setCurrentPoolName] = React.useState(props.name)
+  const [editedPoolName, setEditedPoolName] = React.useState<string | null>(null)
+
   const updatePoolName = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentPoolName(e.target.value)
+    setEditedPoolName(e.target.value)
   }, [])
 
   const dispatch = useDispatch()
   const fireUpdateAction = React.useCallback(() => {
+    if (editedPoolName == null) {
+      return
+    }
+
+    setEditedPoolName(null)
     dispatch({
       type: 'edit-pool-name',
       poolId: props.id,
-      change: { old: props.name, new: currentPoolName },
+      change: { old: props.name, new: editedPoolName },
     })
-  }, [dispatch, props.id, props.name, currentPoolName])
+  }, [dispatch, props.id, props.name, editedPoolName])
 
   const onKeyDown = React.useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -114,7 +120,7 @@ function PoolCard(props: PoolCardProps) {
         <Input
           ref={inputRef}
           className="text-2xl font-bold uppercase outline-none rounded-none shadow-none border-none"
-          value={currentPoolName}
+          value={editedPoolName ?? props.name}
           onChange={updatePoolName}
           onBlur={fireUpdateAction}
           onKeyDown={onKeyDown}
@@ -193,11 +199,15 @@ function PoolCard(props: PoolCardProps) {
  * TECH DEBT
  * - [ ] move db to context
  * - [ ] set up some sort of tailwind class sharing system/design system
+ * - [ ] recipes should be linked to the pools, instead of being stored in the pools
  *
  * TODO
  * - [ ] add/remove recipe in pool
+ * - [ ] delete pool UI
  * - [ ] combine pools: shows the makes/needs of pools, taken together (emulates trains)
  * - [ ] upload recipes json
+ * - [ ] filter pools
+ * - [ ] grouped view for pools
  */
 
 export default function Index() {
