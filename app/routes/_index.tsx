@@ -190,8 +190,11 @@ function PoolCard(props: PoolCardProps) {
 }
 
 /**
+ * TECH DEBT
+ * - [ ] move db to context
+ * - [ ] set up some sort of tailwind class sharing system/design system
+ *
  * TODO
- * - [ ] edit pool name
  * - [ ] add/remove recipe in pool
  * - [ ] combine pools: shows the makes/needs of pools, taken together (emulates trains)
  * - [ ] upload recipes json
