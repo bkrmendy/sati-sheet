@@ -2,6 +2,7 @@ import type { MetaFunction } from '@remix-run/node'
 import { useAtom } from 'jotai'
 import React from 'react'
 import { DBAtom } from '~/atoms'
+import { Redo, Undo } from '~/components/icons'
 import { Command, CommandInput, CommandItem, CommandList } from '~/components/ui/command'
 import { Input } from '~/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
@@ -45,26 +46,6 @@ const allRecipes = [
   Recipes.copperCable,
 ]
 
-function AddPool() {
-  const dispatch = useDispatch()
-  const onClick = React.useCallback(() => {
-    dispatch({
-      type: 'create-pool',
-      poolId: makeId(),
-      pool: { name: 'New Pool', recipesManufactured: [] },
-    })
-  }, [dispatch])
-
-  return (
-    <div
-      onClick={onClick}
-      className="flex items-center justify-center w-[400px] h-[600px] border-2 border-dashed border-slate-950 opacity-20 hover:opacity-100 text-2xl font-mono cursor-pointer"
-    >
-      + Add Pool
-    </div>
-  )
-}
-
 function AddRecipe() {
   const [open, setOpen] = React.useState(false)
 
@@ -102,7 +83,7 @@ function PoolCard(props: PoolCardProps) {
   const boundary = calculatePoolBoundary(pool)
 
   return (
-    <div className="grid max-w-[650px] h-max grid-cols-4 border-2 border-slate-950 font-mono">
+    <div className="bg-white grid max-w-[650px] h-max grid-cols-4 border-2 border-slate-950 font-mono">
       <div className="col-span-4 flex justify-center border border-slate-950 p-2 text-2xl font-bold uppercase">
         <Input
           className="text-2xl font-bold uppercase outline-none rounded-none shadow-none border-none"
@@ -132,6 +113,9 @@ function PoolCard(props: PoolCardProps) {
         ))}
       </div>
       <div className="col-span-2 row-span-2 grid grid-cols-2 border-slate-950">
+        {boundary.makes.length === 0 && (
+          <div className="col-span-2 border border-slate-950"></div>
+        )}
         {boundary.makes.map((recipe) => (
           <React.Fragment key={recipe.material}>
             <div className="flex justify-end border border-slate-950 p-2 font-semibold">
@@ -186,6 +170,14 @@ function PoolCard(props: PoolCardProps) {
 
 export default function Index() {
   const [, { undo, redo }] = useHistory()
+  const dispatch = useDispatch()
+  const onAddPoolClick = React.useCallback(() => {
+    dispatch({
+      type: 'create-pool',
+      poolId: makeId(),
+      pool: { name: 'New Pool', recipesManufactured: [] },
+    })
+  }, [dispatch])
 
   const [db] = useAtom(DBAtom)
 
@@ -194,18 +186,37 @@ export default function Index() {
     console.error(error)
   }
   return (
-    <div className="flex h-screen">
-      <div onClick={undo}>Undo</div>
-      <div onClick={redo}>Redo</div>
+    <div className="flex h-screen pt-16 relative bg-repeat heropattern-graphpaper-gray-300">
+      <div className="absolute top-5 w-full flex justify-center">
+        <div className="bg-white flex items-center gap-4 px-2 py-1 border-2 border-slate-950 font-mono">
+          <div
+            className="cursor-pointer border border-transparent p-1 hover:border-slate-950"
+            onClick={undo}
+          >
+            <Undo />
+          </div>
+          <div
+            className="cursor-pointer border border-transparent p-1 hover:border-slate-950"
+            onClick={redo}
+          >
+            <Redo />
+          </div>
+          <div
+            className="cursor-pointer border border-transparent p-1 hover:border-slate-950"
+            onClick={onAddPoolClick}
+          >
+            + Add Pool
+          </div>
+        </div>
+      </div>
       <div className="grid grid-cols-3 gap-16 p-4">
         {isLoading && 'Loading...'}
         {error && `Error: ${error}`}
         {data &&
           data.pools.map(
-            // TODO: figure out the types here
             (pool) => !pool.deleted && <PoolCard key={pool.id} pool={pool.pool} />
           )}
-        <AddPool />
+        {/* <AddPool /> */}
       </div>
     </div>
   )

@@ -16,6 +16,7 @@
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-popover": "^1.1.1",
+    "@radix-ui/react-tooltip": "^1.1.2",
     "@remix-run/node": "^2.12.1",
     "@remix-run/react": "^2.12.1",
     "@remix-run/serve": "^2.12.1",
@@ -29,7 +30,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-hero-patterns": "^0.1.2"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
