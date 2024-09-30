@@ -27,6 +27,7 @@ export interface RemoveRecipe {
 export interface CreatePool {
   type: 'create-pool'
   poolId: string
+  name: string
   pool: Pool
 }
 

@@ -10,7 +10,6 @@ export interface Recipe {
 }
 
 export interface Pool {
-  name: string
   recipesManufactured: Recipe[]
 }
 

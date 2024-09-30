@@ -74,10 +74,36 @@ function AddRecipe() {
 
 interface PoolCardProps {
   pool: Pool
+  name: string
+  id: string
 }
 
 function PoolCard(props: PoolCardProps) {
   const { pool } = props
+
+  const inputRef = React.createRef<HTMLInputElement>()
+  const [currentPoolName, setCurrentPoolName] = React.useState(props.name)
+  const updatePoolName = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentPoolName(e.target.value)
+  }, [])
+
+  const dispatch = useDispatch()
+  const fireUpdateAction = React.useCallback(() => {
+    dispatch({
+      type: 'edit-pool-name',
+      poolId: props.id,
+      change: { old: props.name, new: currentPoolName },
+    })
+  }, [dispatch, props.id, props.name, currentPoolName])
+
+  const onKeyDown = React.useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        inputRef.current?.blur()
+      }
+    },
+    [inputRef]
+  )
 
   const recipes = recipesWithCount(pool.recipesManufactured)
   const boundary = calculatePoolBoundary(pool)
@@ -86,9 +112,12 @@ function PoolCard(props: PoolCardProps) {
     <div className="bg-white grid max-w-[650px] h-max grid-cols-4 border-2 border-slate-950 font-mono">
       <div className="col-span-4 flex justify-center border border-slate-950 p-2 text-2xl font-bold uppercase">
         <Input
+          ref={inputRef}
           className="text-2xl font-bold uppercase outline-none rounded-none shadow-none border-none"
-          value={pool.name}
-          onChange={NOOP}
+          value={currentPoolName}
+          onChange={updatePoolName}
+          onBlur={fireUpdateAction}
+          onKeyDown={onKeyDown}
         />
       </div>
       <div className="col-span-2 flex justify-center border border-slate-950 p-1 pt-3 text-xl font-semibold uppercase">
@@ -175,7 +204,8 @@ export default function Index() {
     dispatch({
       type: 'create-pool',
       poolId: makeId(),
-      pool: { name: 'New Pool', recipesManufactured: [] },
+      name: 'New Pool',
+      pool: { recipesManufactured: [] },
     })
   }, [dispatch])
 
@@ -202,7 +232,7 @@ export default function Index() {
             <Redo />
           </div>
           <div
-            className="cursor-pointer border border-transparent p-1 hover:border-slate-950"
+            className="select-none cursor-pointer border border-transparent p-1 hover:border-slate-950"
             onClick={onAddPoolClick}
           >
             + Add Pool
@@ -214,9 +244,11 @@ export default function Index() {
         {error && `Error: ${error}`}
         {data &&
           data.pools.map(
-            (pool) => !pool.deleted && <PoolCard key={pool.id} pool={pool.pool} />
+            (pool) =>
+              !pool.deleted && (
+                <PoolCard key={pool.id} id={pool.id} name={pool.name} pool={pool.pool} />
+              )
           )}
-        {/* <AddPool /> */}
       </div>
     </div>
   )

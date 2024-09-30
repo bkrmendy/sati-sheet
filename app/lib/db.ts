@@ -6,6 +6,7 @@ interface DBPool {
   id: string
   createdAt: number
   deleted: boolean
+  name: string
   pool: Pool
 }
 
@@ -27,6 +28,7 @@ export function processAction(db: DB, action: Action) {
           id: action.poolId,
           createdAt: Date.now(),
           deleted: false,
+          name: action.name,
           pool: action.pool,
         }),
       ])
@@ -36,6 +38,9 @@ export function processAction(db: DB, action: Action) {
       break
     case 'resurrect-pool':
       db.transact([tx.pools[action.poolId].update({ deleted: false })])
+      break
+    case 'edit-pool-name':
+      db.transact([tx.pools[action.poolId].update({ name: action.change.new })])
       break
     default:
       throw new Error('not implemented')

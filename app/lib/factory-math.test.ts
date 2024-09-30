@@ -5,7 +5,6 @@ import { Recipes } from './recipes'
 describe('factory math', () => {
   it('can calculate pool from single copper ore', () => {
     const pool: Pool = {
-      name: 'Copper Ore',
       recipesManufactured: [Recipes.copperOre],
     }
 
@@ -24,7 +23,6 @@ describe('factory math', () => {
 
   it('can calculate pool boundary from miner + smelter', () => {
     const pool: Pool = {
-      name: 'Copper Ingot',
       recipesManufactured: [
         Recipes.copperOre,
         Recipes.copperIngot,
@@ -52,7 +50,6 @@ describe('factory math', () => {
 
   it('can calculate more complex copper setup', () => {
     const pool: Pool = {
-      name: 'Big Copper Site',
       recipesManufactured: [
         Recipes.copperOre,
         Recipes.copperIngot,
@@ -102,7 +99,6 @@ describe('factory math', () => {
 
   it("can calculate what's needed", () => {
     const pool: Pool = {
-      name: 'Incomplete Copper Pool',
       recipesManufactured: [
         Recipes.copperSheet,
         Recipes.copperSheet,
