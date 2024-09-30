@@ -10,8 +10,8 @@ interface DBPool {
 }
 
 export interface Schema {
-  recipes: Recipe[]
-  pools: DBPool[]
+  recipes: Recipe
+  pools: DBPool
 }
 
 export type DB = ReturnType<typeof initDB>
