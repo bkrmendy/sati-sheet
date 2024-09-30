@@ -2,7 +2,7 @@ import type { MetaFunction } from '@remix-run/node'
 import { useAtom } from 'jotai'
 import React from 'react'
 import { DBAtom } from '~/atoms'
-import { Redo, Undo } from '~/components/icons'
+import { EllipsisVertical, Redo, Undo } from '~/components/icons'
 import { Command, CommandInput, CommandItem, CommandList } from '~/components/ui/command'
 import { Input } from '~/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
@@ -88,6 +88,35 @@ function AddRecipe({ onAddRecipe }: AddRecipeProps) {
             ))}
           </CommandList>
         </Command>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+function PoolEditPopup({ poolId }: { poolId: string }) {
+  const dispatch = useDispatch()
+  const onDeletePool = React.useCallback(() => {
+    dispatch({ type: 'delete-pool', poolId: poolId })
+  }, [dispatch, poolId])
+  return (
+    <Popover>
+      <PopoverTrigger>
+        <div className="p-1 border-2 border-transparent hover:border-slate-950 cursor-pointer">
+          <EllipsisVertical />
+        </div>
+      </PopoverTrigger>
+      <PopoverContent
+        side="right"
+        align="start"
+        alignOffset={-12}
+        className="w-max shadow-none rounded-none border-slate-950 border-2 font-mono"
+      >
+        <div
+          onClick={onDeletePool}
+          className="select-none cursor-pointer py-1 px-2 bg-transparent hover:bg-red-100 text-red-500"
+        >
+          Delete
+        </div>
       </PopoverContent>
     </Popover>
   )
@@ -195,7 +224,7 @@ function PoolCard(props: PoolCardProps) {
 
   return (
     <div className="bg-white grid max-w-[650px] h-max grid-cols-4 border-2 border-slate-950 font-mono">
-      <div className="col-span-4 flex justify-center border border-slate-950 p-2 text-2xl font-bold uppercase">
+      <div className="col-span-4 flex justify-between items-center border border-slate-950 p-2 text-2xl font-bold uppercase">
         <Input
           ref={inputRef}
           className="text-2xl font-bold uppercase outline-none rounded-none shadow-none border-none"
@@ -204,6 +233,7 @@ function PoolCard(props: PoolCardProps) {
           onBlur={fireUpdateAction}
           onKeyDown={onKeyDown}
         />
+        <PoolEditPopup poolId={props.id} />
       </div>
       <div className="col-span-2 flex justify-center border border-slate-950 p-1 pt-3 text-xl font-semibold uppercase">
         Needs
@@ -300,11 +330,10 @@ function PoolCard(props: PoolCardProps) {
  * - [ ] recipes should be linked to the pools, instead of being stored in the pools
  *
  *   TODO
- * - [ ] delete pool UI
  * - [ ] combine pools: shows the makes/needs of pools, taken together (emulates trains)
+ * - [ ] grouped view for pools
  * - [ ] upload recipes json
  * - [ ] filter pools
- * - [ ] grouped view for pools
  * - [ ] keyboard shortcuts
  */
 
@@ -331,19 +360,19 @@ export default function Index() {
       <div className="absolute top-5 w-full flex justify-center">
         <div className="bg-white flex items-center gap-4 p-2 border-2 border-slate-950 font-mono">
           <div
-            className="cursor-pointer border border-transparent p-1 hover:border-slate-950"
+            className="cursor-pointer border-2 border-transparent p-1 hover:border-slate-950"
             onClick={undo}
           >
             <Undo />
           </div>
           <div
-            className="cursor-pointer border border-transparent p-1 hover:border-slate-950"
+            className="cursor-pointer border-2 border-transparent p-1 hover:border-slate-950"
             onClick={redo}
           >
             <Redo />
           </div>
           <div
-            className="select-none cursor-pointer border border-transparent p-1 hover:border-slate-950"
+            className="select-none cursor-pointer border-2 border-transparent p-1 hover:border-slate-950"
             onClick={onAddPoolClick}
           >
             + Add Pool
